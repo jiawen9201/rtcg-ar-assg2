@@ -1,0 +1,146 @@
+h1{
+    text-align: center;
+}
+body{
+    background-color: rgb(234, 228, 217);
+    font-size: medium;
+    font-family: 'Akaya Kanadaka';
+}
+button{
+    background-color: rgb(153, 89, 99);
+    color: white;
+    padding: 10px;
+    border-width: 0px;
+    border-radius: 10px;
+    font-size: medium;
+    font-family: Arial, sans-serif;
+}
+div {
+    margin: 20px;
+    padding: 20px;
+    border-width: 3px;
+    border-color: rgb(45, 26, 18);
+    border-style: solid;
+    border-radius: 10px;
+}
+canvas{
+    width: 250px;
+    height: 250px;
+}
+.topbar {
+    padding: 20px;
+    background-color: rgb(153, 89, 99);
+    color: white;
+    border: none;
+    margin: 30px;
+}
+.middlebar {
+    display: flex;
+    justify-content: space-around;
+}
+.middlebarelement{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.bottombar{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    background-color: rgb(153, 89, 99);
+    color: white;
+    border: none;
+    margin: 30px;
+}
+.bottombarhori{
+    display: flex;
+    align-items: center;
+    background-color: rgb(234, 228, 217);
+    margin: 0px;
+}
+.bottombarelement{
+    margin: 10px;
+    background-color: rgb(234, 228, 217);
+    color: black;
+}
+input[type=file]{
+    display: none;
+}
+#finput{
+    background-color: rgb(153, 89, 99);
+    color: white;
+    padding: 10px;
+    border-width: 0px;
+    border-radius: 10px;
+    font-family: Arial, sans-serif;
+}
+label:hover{
+    text-transform: uppercase;
+    font-weight: bold;
+    background-color: rgb(203, 171, 176);
+    color: black;
+}
+button:hover{
+    font-weight: bold;
+    background-color: rgb(203, 171, 176);
+    color: black;
+}
+#canvas1, #canvas2, #canvas3, #canvas4{
+    background-color: white;
+    border-radius: 20px;
+}
+a{
+    text-decoration: none;
+}
+img{
+    width: 400px;
+    height: 400px;
+}
+#linktoar{
+    text-decoration: none;
+    color: rgb(202, 235, 227);
+}
+#linktoar:hover{
+    text-transform: uppercase;
+    text-decoration: underline;
+}
+#linktoar:visited{
+    color: rgb(202, 235, 227);
+}
+.slidecontainer{
+    border: none;
+    color: black;
+    display: flex;
+    flex-direction: column;
+}
+.slider {
+    -webkit-appearance: none;
+    width: 80%;
+    height: 25px;
+    background: #d3d3d3;
+    outline: none;
+    opacity: 0.7;
+    -webkit-transition: .2s;
+    transition: opacity .2s;
+  }
+  
+  .slider:hover {
+    opacity: 1;
+  }
+  
+  .slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 25px;
+    height: 25px;
+    background: #670b3f;
+    cursor: pointer;
+  }
+  
+  .slider::-moz-range-thumb {
+    width: 25px;
+    height: 25px;
+    background: #811753;
+    cursor: pointer;
+  }

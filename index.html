@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Feature-based Marker Generator</title>
+    <link rel="stylesheet" href="design.css" />
+    <link href="https://fonts.googleapis.com/css?family=Akaya Kanadaka" rel="stylesheet" />
+    <!--Generate Pattern Marker-->
+    <script
+        src="https://jeromeetienne.github.io/AR.js/three.js/examples/marker-training/threex-arpatternfile.js"></script>
+    <!--Generate PDF from Marker-->
+    <script src="https://jeromeetienne.github.io/AR.js/three.js/examples/vendor/pdfMake/pdfmake.min.js"></script>
+    <!--Natural Feature Tracking-->
+    <script src="https://trackingjs.com/bower/tracking.js/build/tracking-min.js"></script>
+    <!--Load Image-->
+    <script src="https://www.dukelearntoprogram.com/course1/common/js/image/SimpleImage.js"></script>
+</head>
+
+<body>
+    <div class="topbar">
+        <h1>Natural Feature Tracking</h1>
+    </div>
+    <div class="middlebar">
+        <!--Upload Image-->
+        <div class="middlebarelement">
+            <label id="finput" for="fileinput" class="custom-file-upload">
+                CHOOSE IMAGE
+            </label>
+            <input type="file" id="fileinput" onchange="upload()" accept="image/jpeg, image/jpg, image/png" />
+            <div id="canvas1"><canvas id="can1" class="img"></canvas></div>
+        </div>
+        <!--Change Grayscale-->
+        <div class="middlebarelement">
+            <button class="buttons" onclick="tograyScale()">
+                CONVERT GRAYSCALE
+            </button>
+            <div id="canvas2"><canvas class="img" id="can2"></canvas></div>
+        </div>
+        <!--Generate Feature-->
+        <div class="middlebarelement">
+            <button class="buttons" onclick="featureDetection()">
+                GENERATE FEATURE
+            </button>
+            <div id="canvas3"><canvas class="img" id="can3"></canvas></div>
+        </div>
+    </div>
+    <div class="bottombar">
+        <!--Download Marker-->
+        <h2>Generated Marker</h2>
+        <div class="bottombarhori">
+            <div class="bottombar">
+                <button class="buttons bottombarelement" id="downloadimage">
+                    DOWNLOAD IMAGE (.png)
+                </button>
+                <button class="buttons bottombarelement" id="downloadpdfone">
+                    PDF One Per Page
+                </button>
+            </div>
+        </div>
+        <div id="canvas4"></div>
+        <h3>
+            <a id="linktoar" href="AR.html" title="Click here to go to the AR Page">Try AR using the Marker
+                now!</a>
+        </h3>
+    </div>
+
+    <script>
+        var image = null;
+        var grayed = false;
+        var featuregenerated = false;
+        var innerImageURL = null;
+
+        // Upload Image File
+        function upload() {
+            var fileinput = document.getElementById("fileinput");
+            image = new SimpleImage(fileinput);
+
+            var canvas = document.getElementById("can1");
+            image.drawTo(canvas);
+        }
+
+        document
+            .querySelector("#fileinput")
+            .addEventListener("change", function () {
+                var file = this.files[0];
+                imageName = file.name;
+                // remove file extension
+                imageName =
+                    imageName.substring(0, imageName.lastIndexOf(".")) || imageName;
+
+                // debugger
+
+                var reader = new FileReader();
+                reader.onload = function (event) {
+                    innerImageURL = event.target.result;
+                    updateFullMarkerImage();
+                };
+                reader.readAsDataURL(file);
+            });
+        // grayscale image
+        function tograyScale() {
+            if (image == null) {
+                alert("Please Upload Image First");
+            } else {
+                for (var pixel of image.values()) {
+                    var avg = (pixel.getRed() + pixel.getGreen() + pixel.getBlue()) / 3;
+                    pixel.setRed(avg);
+                    pixel.setGreen(avg);
+                    pixel.setBlue(avg);
+                }
+
+                var canvas = document.getElementById("can2");
+                image.drawTo(canvas);
+                grayed = true;
+            }
+        }
+
+        function featureDetection() {
+            window.fastThreshold = 10;
+            var canvas = document.getElementById("can3");
+            var context = canvas.getContext("2d");
+            var image = document.getElementById("can2");
+            if (grayed === false) {
+                alert("Please Change to Gray Scale First");
+                return;
+            }
+            var width = image.clientWidth;
+            var height = image.clientHeight;
+
+            canvas.width = width;
+            canvas.height = height;
+
+            window.fastThreshold = 10;
+
+            var doFindFeatures = function () {
+                tracking.Fast.THRESHOLD = window.fastThreshold;
+                context.drawImage(image, 0, 0, width, height);
+
+                var imageData = context.getImageData(0, 0, width, height);
+                var gray = tracking.Image.grayscale(imageData.data, width, height);
+                var corners = tracking.Fast.findCorners(gray, width, height);
+
+                for (var i = 0; i < corners.length; i += 2) {
+                    context.fillStyle = "#0f0";
+                    context.fillRect(corners[i], corners[i + 1], 3, 3);
+                }
+            };
+
+            doFindFeatures();
+
+            featuregenerated = true;
+        }
+
+        // display marker
+        function updateFullMarkerImage() {
+            var markerImage = document.createElement("img");
+            markerImage.setAttribute("class", "img");
+            markerImage.src = innerImageURL;
+
+            // put innerImageURL into #imageContainer
+            var container = document.querySelector("#canvas4");
+            while (container.firstChild)
+                container.removeChild(container.firstChild);
+            container.appendChild(markerImage);
+        }
+
+        // download image
+        document
+            .querySelector("#downloadimage")
+            .addEventListener("click", function () {
+                if (image === null) {
+                    alert("Please Upload Image First");
+                    return;
+                }
+                var domElement = window.document.createElement("a");
+                domElement.href = innerImageURL;
+                domElement.download = "pattern-" + (imageName || "marker") + ".png";
+                document.body.appendChild(domElement);
+                domElement.click();
+                document.body.removeChild(domElement);
+            });
+
+        // download pdf directly
+        document
+            .querySelector("#downloadpdfone")
+            .addEventListener("click", generatePdfOnePerPage);
+
+        function generatePdfOnePerPage() {
+            if (image === null) {
+                alert("Please Upload Image First");
+                return;
+            }
+            var docDefinition = {
+                content: [
+                    {
+                        image: innerImageURL,
+                        width: 400,
+                        alignment: "center",
+                    },
+                ],
+            };
+            pdfMake.createPdf(docDefinition).open();
+        }
+    </script>
+</body>
+
+</html>
